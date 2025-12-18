@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ app.job.title }} <small class="text-muted">@ {{ app.company.name }}</small></h1>
+<p>
+  {% if app.job.job_link %}<a href="{{ app.job.job_link }}" target="_blank">Job link</a> • {% endif %}
+  Source: {{ app.job.get_source_display }} • Location: {{ app.job.location|default:'—' }}
+</p>
+
+<div class="mb-3">
+  <strong>Status:</strong> {{ app.get_status_display }}
+  <form class="d-inline" method="post" action="/applications/{{ app.id }}/status/">{% csrf_token %}
+    <select name="status" class="form-select d-inline w-auto">
+      {% for value,label in app.Status.choices %}
+        <option value="{{ value }}" {% if app.status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-sm btn-outline-primary">Update</button>
+  </form>
+</div>
+
+<ul class="list-group mb-3">
+  <li class="list-group-item"><strong>Date applied:</strong> {{ app.date_applied|default:'—' }}</li>
+  <li class="list-group-item"><strong>Next follow up on:</strong> {{ app.next_follow_up_on|default:'—' }}</li>
+  <li class="list-group-item"><strong>Resume version:</strong> {{ app.resume_version|default:'—' }}</li>
+</ul>
+
+<h4>Notes</h4>
+<pre class="p-3 bg-light border rounded" style="white-space:pre-wrap;">{{ app.notes|default:'(none)' }}</pre>
+
+<h4 class="mt-4">Timeline</h4>
+<ol class="list-group list-group-numbered">
+  {% for h in app.history.all %}
+    <li class="list-group-item">{{ h.changed_at }} — {{ h.old_status|capfirst }} → <strong>{{ h.new_status|capfirst }}</strong></li>
+  {% empty %}
+    <li class="list-group-item text-muted">No changes yet.</li>
+  {% endfor %}
+</ol>
+{% endblock %}

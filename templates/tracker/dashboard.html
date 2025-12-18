@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-4">Dashboard</h1>
+<div class="row g-3">
+  {% for key, val in counts.items %}
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <div class="h6 text-muted text-uppercase">{{ key }}</div>
+        <div class="display-6">{{ val }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="d-flex align-items-center justify-content-between mt-4">
+  <h4>Upcoming follow-ups</h4>
+  <a class="btn btn-primary" href="/applications/add/">Quick Add</a>
+</div>
+<table class="table table-sm table-striped mt-2">
+  <thead><tr><th>Date</th><th>Job</th><th>Company</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for a in upcoming %}
+    <tr>
+      <td>{{ a.next_follow_up_on }}</td>
+      <td><a href="/applications/{{ a.id }}/">{{ a.job.title }}</a></td>
+      <td>{{ a.company.name }}</td>
+      <td>{{ a.get_status_display }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">No upcoming follow-ups.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h4 class="mt-4">Due/Overdue follow-ups</h4>
+<table class="table table-sm table-bordered">
+  <thead><tr><th>Date</th><th>Job</th><th>Company</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for a in due %}
+    <tr class="table-danger">
+      <td>{{ a.next_follow_up_on }}</td>
+      <td><a href="/applications/{{ a.id }}/">{{ a.job.title }}</a></td>
+      <td>{{ a.company.name }}</td>
+      <td>{{ a.get_status_display }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">Nothing due today 🎉</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

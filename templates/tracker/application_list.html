@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Applications</h1>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">{{ filter.form.q }}</div>
+  <div class="col-auto">{{ filter.form.status }}</div>
+  <div class="col-auto">{{ filter.form.company }}</div>
+  <div class="col-auto"><button class="btn btn-outline-primary">Filter</button></div>
+</form>
+
+<table class="table table-hover">
+  <thead><tr><th>Date</th><th>Title</th><th>Company</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for a in page_obj %}
+    <tr>
+      <td style="white-space:nowrap;">{{ a.date_applied|default:'—' }}</td>
+      <td><a href="/applications/{{ a.id }}/">{{ a.job.title }}</a></td>
+      <td>{{ a.company.name }}</td>
+      <td>{{ a.get_status_display }}</td>
+      <td class="text-end"><a class="btn btn-sm btn-secondary" href="/applications/{{ a.id }}/edit/">Edit</a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="text-muted">No applications yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<nav>
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    <li class="page-item active"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}
